@@ -1,0 +1,9 @@
+# Petit test de pipeline
+stages:
+  - test
+
+job_test_simple:
+  stage: test
+  script:
+    - echo "Bonjour GitLab CI 👋"
+    - echo "Tout fonctionne !"
