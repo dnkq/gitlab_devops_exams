@@ -49,7 +49,7 @@ build:
 
 run:
   stage: run
-  image: docker:latest
+  image: docker:stable-dind
   services:
     - docker:dind
   script:
