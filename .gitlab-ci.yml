@@ -49,10 +49,11 @@ build:
 
 run:
   stage: run
-  image: docker:stable-dind
+  image: docker:latest
   services:
     - docker:dind
   script:
+    - apk add --no-cache curl
     - docker run -d -p 8000:8000 --name users dnkq/users:latest
     - sleep 10
     - curl localhost
