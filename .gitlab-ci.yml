@@ -40,12 +40,11 @@ build_and_push:
   services:
     - docker:dind
   before_script:
-    - docker info
     - echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USER" --password-stdin
   script:
-    - docker build -t dnkq/users:latest ./users
-    - docker build -t dnkq/orders:latest ./orders
-    - docker build -t dnkq/gateway:latest ./gateway
+    - docker build -t dnkq/users:$CI_COMMIT_SHORT_SHA ./users
+    - docker build -t dnkq/orders:$CI_COMMIT_SHORT_SHA ./orders
+    - docker build -t dnkq/gateway:$CI_COMMIT_SHORT_SHA ./gateway
     - docker push dnkq/users:$CI_COMMIT_SHORT_SHA
     - docker push dnkq/orders:$CI_COMMIT_SHORT_SHA
     - docker push dnkq/gateway:$CI_COMMIT_SHORT_SHA
