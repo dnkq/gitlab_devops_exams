@@ -30,7 +30,7 @@ test:
     - pip install -r users/requirements.txt
     - pip install fastapi
     - pip install pytest
-    - pip install httpx
+    - pip install httpx requests
     - cd users
     - python3 -m pytest
 
