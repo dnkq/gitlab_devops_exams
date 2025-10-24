@@ -53,6 +53,7 @@ run:
   services:
     - docker:dind
   script:
+    #installer curl dans le runner
     - apk add --no-cache curl
     - docker run -d -p 8000:8000 --name users dnkq/users:latest
     - sleep 10
