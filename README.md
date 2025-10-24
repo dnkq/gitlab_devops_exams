@@ -54,3 +54,4 @@
 
 ##Documentation Page
 ![ScreenShot](https://github.com/DataScientest/gitlab_devops_exams/blob/main/docs.png)
+# trigger pipeline
