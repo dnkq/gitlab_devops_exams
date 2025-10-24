@@ -26,8 +26,8 @@ test:
   stage: test
   image: python:latest
   script:
-    - sudo apt-get update 
-    - sudo apt-get install -y python3-pip
+    - apt-get update 
+    - apt-get install -y python3-pip
     - pip install fastapi
     - pip install pytest
     - pip install httpx
