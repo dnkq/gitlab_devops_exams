@@ -125,7 +125,9 @@ stop_prod:
 
 deploy_dev:
   stage: deploy_dev
-  image: alpine/helm:3.14.0
+  image:
+    name: alpine/helm:3.14.0
+    entrypoint: ["/bin/sh", "-c"]
   services:
     - docker:dind
   environment:
@@ -146,7 +148,9 @@ deploy_dev:
 
 deploy_staging:
   stage: deploy_staging
-  image: alpine/helm:3.14.0
+  image:
+    name: alpine/helm:3.14.0
+    entrypoint: ["/bin/sh", "-c"]
   services:
     - docker:dind
   environment:
@@ -167,7 +171,9 @@ deploy_staging:
 
 deploy_prod:
   stage: deploy_prod
-  image: alpine/helm:3.14.0
+  image:
+    name: alpine/helm:3.14.0
+    entrypoint: ["/bin/sh", "-c"]
   services:
     - docker:dind
   when: manual
