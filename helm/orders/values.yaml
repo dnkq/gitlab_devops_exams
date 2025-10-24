@@ -1,0 +1,8 @@
+image:
+  repository: dnkq/orders
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 8000
+

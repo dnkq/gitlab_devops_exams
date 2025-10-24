@@ -1,9 +1,180 @@
-# Petit test de pipeline
+variables:
+  KUBE_NAMESPACE_dev: dev
+  KUBE_NAMESPACE_staging: staging
+  KUBE_NAMESPACE_prod: prod
+  IP_DEV: 3.249.125.40
+  IP_STAGING: 3.249.125.40
+  IP_PROD: 3.249.125.40
+  NODEPORT_DEV: 30000
+  NODEPORT_STAGING: 30001
+  NODEPORT_PROD: 30002
+
+image:
+  name: "python:3.11-alpine"
+  entrypoint: ["/bin/sh", "-c"]
+
 stages:
   - test
+  - build
+  - run
+  - push
+  - deploy_dev
+  - deploy_staging
+  - deploy_prod
 
-job_test_simple:
+test:
   stage: test
+  image: python:latest
   script:
-    - echo "Bonjour GitLab CI 👋"
-    - echo "Tout fonctionne !"
+    - sudo apt-get update 
+    - sudo apt-get install -y python3-pip
+    - pip install fastapi
+    - pip install pytest
+    - pip install httpx
+    - cd users
+    - python3 -m pytest
+
+build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t dnkq/users:latest ./users
+    - docker build -t dnkq/orders:latest ./orders
+    - docker build -t dnkq/gateway:latest ./gateway
+    - docker tag dnkq/users:latest dnkq/users:$CI_COMMIT_SHORT_SHA
+    - docker tag dnkq/orders:latest dnkq/orders:$CI_COMMIT_SHORT_SHA
+    - docker tag dnkq/gateway:latest dnkq/gateway:$CI_COMMIT_SHORT_SHA
+
+run:
+  stage: run
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker run -d -p 8000:8000 --name users dnkq/users:latest
+    - sleep 10
+    - curl localhost
+    - docker stop users
+    - docker rm users
+
+push:
+  stage: push
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker info
+    - docker login -u "$DOCKERHUB_USER" -p "$DOCKERHUB_PASSWORD"
+  script:
+    - docker push dnkq/users:latest
+    - docker push dnkq/orders:latest
+    - docker push dnkq/gateway:latest
+    # If we are building a tag, push the `latest` container image tag too
+    - if [ ! -z "$CI_COMMIT_TAG" ]; then
+        docker push dnkq/users:$CI_COMMIT_SHORT_SHA;
+        docker push dnkq/orders:$CI_COMMIT_SHORT_SHA;
+        docker push dnkq/gateway:$CI_COMMIT_SHORT_SHA;
+      fi
+
+stop_dev:
+  stage: deploy_dev
+  variables:
+    NAMESPACE: dev
+  when: manual
+  environment:
+    name: dev-$CI_BUILD_REF_NAME
+    action: stop
+  script:
+    - sudo helm uninstall app -n $NAMESPACE
+
+stop_staging:
+  stage: deploy_staging
+  variables:
+    NAMESPACE: staging
+  when: manual
+  environment:
+    name: staging-$CI_BUILD_REF_NAME
+    action: stop
+  script:
+    - sudo helm uninstall app -n $NAMESPACE
+
+stop_prod:
+  stage: deploy_prod
+  variables:
+    NAMESPACE: prod
+  when: manual
+  environment:
+    name: prod
+    action: stop
+  script:
+    - sudo helm uninstall app -n $NAMESPACE
+
+deploy_dev:
+  stage: deploy_dev
+  image: docker:latest
+  services:
+    - docker:dind
+  environment:
+    name: dev-$CI_BUILD_REF_NAME
+    url: http://$IP_DEV:$NODEPORT_DEV
+    on_stop: stop_dev
+  variables:
+    NAMESPACE: dev
+  script:
+    - rm -Rf ~/.kube
+    - mkdir ~/.kube
+    - ls
+    - cat $KUBE_CONFIG > ~/.kube/config
+    - export KUBECONFIG=~/.kube/config
+    - cp helm/values.yaml values.yml
+    - sudo helm upgrade --install users ./helm/users --values=values.yml --namespace $NAMESPACE --set image.repository="$CI_REGISTRY_IMAGE/users" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
+    - sudo helm upgrade --install orders ./helm/orders --values=values.yml --namespace $NAMESPACE --set image.repository="$CI_REGISTRY_IMAGE/orders" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
+    - sudo helm upgrade --install gateway ./helm/gateway --values=values.yml --namespace $NAMESPACE --set image.repository="$CI_REGISTRY_IMAGE/gateway" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
+
+
+deploy_staging:
+  stage: deploy_staging
+  image: docker:latest
+  services:
+    - docker:dind
+  environment:
+    name: staging-$CI_BUILD_REF_NAME
+    url: http://$IP_STAGING:$NODEPORT_STAGING
+    on_stop: stop_staging
+  variables:
+    NAMESPACE: staging
+  script:
+    - rm -Rf ~/.kube
+    - mkdir ~/.kube
+    - ls
+    - cat $KUBE_CONFIG > ~/.kube/config
+    - export KUBECONFIG=~/.kube/config
+    - cp helm/values.yaml values.yml
+    - sudo helm upgrade --install users ./helm/users --values=values.yml --namespace $NAMESPACE --set image.repository="$CI_REGISTRY_IMAGE/users" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_STAGING"
+    - sudo helm upgrade --install orders ./helm/orders --values=values.yml --namespace $NAMESPACE --set image.repository="$CI_REGISTRY_IMAGE/orders" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_STAGING"
+    - sudo helm upgrade --install gateway ./helm/gateway --values=values.yml --namespace $NAMESPACE --set image.repository="$CI_REGISTRY_IMAGE/gateway" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_STAGING"
+
+
+deploy_prod:
+  stage: deploy_prod
+  image: docker:latest
+  services:
+    - docker:dind
+  when: manual
+  environment:
+    name: prod
+    url: http://$IP_PROD:$NODEPORT_PROD
+  variables:
+    NAMESPACE: prod
+  script:
+    - rm -Rf ~/.kube
+    - mkdir ~/.kube
+    - ls
+    - cat $KUBE_CONFIG > ~/.kube/config
+    - export KUBECONFIG=~/.kube/config
+    - cp helm/values.yaml values.yml
+    - sudo helm upgrade --install users ./helm/users --values=values.yml --namespace $NAMESPACE --set image.repository="$CI_REGISTRY_IMAGE/users" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_PROD"
+    - sudo helm upgrade --install orders ./helm/orders --values=values.yml --namespace $NAMESPACE --set image.repository="$CI_REGISTRY_IMAGE/orders" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_PROD"
+    - sudo helm upgrade --install gateway ./helm/gateway --values=values.yml --namespace $NAMESPACE --set image.repository="$CI_REGISTRY_IMAGE/gateway" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_PROD"
