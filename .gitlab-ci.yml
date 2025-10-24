@@ -140,9 +140,9 @@ deploy_dev:
     - ls
     - cat $KUBE_CONFIG > ~/.kube/config
     - export KUBECONFIG=~/.kube/config
-    - sudo helm upgrade --install users ./helm/users --values=values.yml --namespace $NAMESPACE --set image.repository="dnkq/users" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
-    - sudo helm upgrade --install orders ./helm/orders --values=values.yml --namespace $NAMESPACE --set image.repository="dnkq/orders" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
-    - sudo helm upgrade --install gateway ./helm/gateway --values=values.yml --namespace $NAMESPACE --set image.repository="dnkq/gateway" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
+    - helm upgrade --install users ./helm/users --values=values.yml --namespace $NAMESPACE --set image.repository="dnkq/users" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
+    - helm upgrade --install orders ./helm/orders --values=values.yml --namespace $NAMESPACE --set image.repository="dnkq/orders" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
+    - helm upgrade --install gateway ./helm/gateway --values=values.yml --namespace $NAMESPACE --set image.repository="dnkq/gateway" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
 
 deploy_staging:
   stage: deploy_staging
@@ -161,9 +161,9 @@ deploy_staging:
     - ls
     - cat $KUBE_CONFIG > ~/.kube/config
     - export KUBECONFIG=~/.kube/config
-    - sudo helm upgrade --install users ./helm/users --values=values.yml --namespace $NAMESPACE --set image.repository="dnkq/users" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
-    - sudo helm upgrade --install orders ./helm/orders --values=values.yml --namespace $NAMESPACE --set image.repository="dnkq/orders" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
-    - sudo helm upgrade --install gateway ./helm/gateway --values=values.yml --namespace $NAMESPACE --set image.repository="dnkq/gateway" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
+    - helm upgrade --install users ./helm/users --values=values.yml --namespace $NAMESPACE --set image.repository="dnkq/users" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
+    - helm upgrade --install orders ./helm/orders --values=values.yml --namespace $NAMESPACE --set image.repository="dnkq/orders" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
+    - helm upgrade --install gateway ./helm/gateway --values=values.yml --namespace $NAMESPACE --set image.repository="dnkq/gateway" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
 
 deploy_prod:
   stage: deploy_prod
@@ -182,6 +182,6 @@ deploy_prod:
     - ls
     - cat $KUBE_CONFIG > ~/.kube/config
     - export KUBECONFIG=~/.kube/config
-    - sudo helm upgrade --install users ./helm/users --values=values.yml --namespace $NAMESPACE --set image.repository="dnkq/users" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
-    - sudo helm upgrade --install orders ./helm/orders --values=values.yml --namespace $NAMESPACE --set image.repository="dnkq/orders" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
-    - sudo helm upgrade --install gateway ./helm/gateway --values=values.yml --namespace $NAMESPACE --set image.repository="dnkq/gateway" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
+    - helm upgrade --install users ./helm/users --values=values.yml --namespace $NAMESPACE --set image.repository="dnkq/users" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
+    - helm upgrade --install orders ./helm/orders --values=values.yml --namespace $NAMESPACE --set image.repository="dnkq/orders" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
+    - helm upgrade --install gateway ./helm/gateway --values=values.yml --namespace $NAMESPACE --set image.repository="dnkq/gateway" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
