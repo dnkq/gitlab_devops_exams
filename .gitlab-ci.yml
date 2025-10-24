@@ -2,9 +2,9 @@ variables:
   KUBE_NAMESPACE_dev: dev
   KUBE_NAMESPACE_staging: staging
   KUBE_NAMESPACE_prod: prod
-  IP_DEV: 3.249.125.40
-  IP_STAGING: 3.249.125.40
-  IP_PROD: 3.249.125.40
+  IP_DEV: 18.201.18.42
+  IP_STAGING: 18.201.18.42
+  IP_PROD: 18.201.18.42
   NODEPORT_DEV: 30000
   NODEPORT_STAGING: 30001
   NODEPORT_PROD: 30002
@@ -99,7 +99,7 @@ stop_dev:
     name: dev-$CI_BUILD_REF_NAME
     action: stop
   script:
-    - sudo helm uninstall app -n $NAMESPACE
+    - helm uninstall app -n $NAMESPACE
 
 stop_staging:
   stage: deploy_staging
@@ -110,7 +110,7 @@ stop_staging:
     name: staging-$CI_BUILD_REF_NAME
     action: stop
   script:
-    - sudo helm uninstall app -n $NAMESPACE
+    - helm uninstall app -n $NAMESPACE
 
 stop_prod:
   stage: deploy_prod
@@ -121,7 +121,7 @@ stop_prod:
     name: prod
     action: stop
   script:
-    - sudo helm uninstall app -n $NAMESPACE
+    - helm uninstall app -n $NAMESPACE
 
 deploy_dev:
   stage: deploy_dev
