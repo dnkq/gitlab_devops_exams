@@ -126,7 +126,7 @@ stop_prod:
 deploy_dev:
   stage: deploy_dev
   image:
-    name: lachlanevenson/k8s-helm:v3.17.0
+    name: lachlanevenson/k8s-helm:latest
     entrypoint: ["/bin/sh", "-c"]
   services:
     - docker:dind
@@ -150,7 +150,7 @@ deploy_dev:
 deploy_staging:
   stage: deploy_staging
   image:
-    name: lachlanevenson/k8s-helm:v3.17.0
+    name: lachlanevenson/k8s-helm:latest
     entrypoint: ["/bin/sh", "-c"]
   services:
     - docker:dind
@@ -174,7 +174,7 @@ deploy_staging:
 deploy_prod:
   stage: deploy_prod
   image:
-    name: lachlanevenson/k8s-helm:v3.17.0
+    name: lachlanevenson/k8s-helm:latest
     entrypoint: ["/bin/sh", "-c"]
   services:
     - docker:dind
