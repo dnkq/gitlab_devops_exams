@@ -44,7 +44,6 @@ test:
     - pip install pytest
     - pip install httpx requests
     - cd users
-    - ls
     - python3 -m pytest
 
 build_and_push:
