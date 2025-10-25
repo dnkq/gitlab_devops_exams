@@ -155,6 +155,9 @@ deploy_dev:
   - export KUBECONFIG=~/.kube/config
   - kubectl get namespace $NAMESPACE || kubectl create namespace $NAMESPACE
   script:
+    - helm uninstall users --namespace $NAMESPACE || true
+    - helm uninstall orders --namespace $NAMESPACE || true
+    - helm uninstall gateway --namespace $NAMESPACE || true
     - helm upgrade --install users ./helm/users --values=helm/users/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/users" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
     - helm upgrade --install orders ./helm/orders --values=helm/orders/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/orders" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
     - helm upgrade --install gateway ./helm/gateway --values=helm/gateway/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/gateway" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
@@ -179,6 +182,9 @@ deploy_staging:
   - export KUBECONFIG=~/.kube/config
   - kubectl get namespace $NAMESPACE || kubectl create namespace $NAMESPACE
   script:
+    - helm uninstall users --namespace $NAMESPACE || true
+    - helm uninstall orders --namespace $NAMESPACE || true
+    - helm uninstall gateway --namespace $NAMESPACE || true
     - helm upgrade --install users ./helm/users --values=helm/users/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/users" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_STAGING"
     - helm upgrade --install orders ./helm/orders --values=helm/orders/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/orders" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_STAGING"
     - helm upgrade --install gateway ./helm/gateway --values=helm/gateway/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/gateway" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_STAGING"
@@ -203,6 +209,9 @@ deploy_prod:
     - export KUBECONFIG=~/.kube/config
     - kubectl get namespace $NAMESPACE || kubectl create namespace $NAMESPACE
   script:
+    - helm uninstall users --namespace $NAMESPACE || true
+    - helm uninstall orders --namespace $NAMESPACE || true
+    - helm uninstall gateway --namespace $NAMESPACE || true
     - helm upgrade --install users ./helm/users --values=helm/users/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/users" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_PROD"
     - helm upgrade --install orders ./helm/orders --values=helm/orders/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/orders" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_PROD"
     - helm upgrade --install gateway ./helm/gateway --values=helm/gateway/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/gateway" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_PROD"
