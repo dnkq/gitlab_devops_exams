@@ -8,7 +8,6 @@ variables:
   NODEPORT_DEV: 30000
   NODEPORT_STAGING: 30001
   NODEPORT_PROD: 30002
-  KUBECONFIG: /root/.kube/config
 
 image:
   name: "python:3.11-alpine"
@@ -138,11 +137,8 @@ deploy_dev:
   variables:
     NAMESPACE: dev
   before_script:
-    - mkdir -p ~/.kube
-    - echo "$KUBE_CONFIG" > ~/.kube/config
-    - chmod 600 ~/.kube/config
-    - export KUBECONFIG=~/.kube/config
-    - kubectl get namespace $NAMESPACE || kubectl create namespace $NAMESPACE
+  - export KUBECONFIG=/home/ubuntu/.kube/config
+  - kubectl get namespace $NAMESPACE || kubectl create namespace $NAMESPACE
   script:
     - helm upgrade --install users ./helm/users --values=helm/users/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/users" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
     - helm upgrade --install orders ./helm/orders --values=helm/orders/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/orders" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
@@ -162,11 +158,8 @@ deploy_staging:
   variables:
     NAMESPACE: staging
   before_script:
-    - mkdir -p ~/.kube
-    - echo "$KUBE_CONFIG" > ~/.kube/config
-    - chmod 600 ~/.kube/config
-    - export KUBECONFIG=~/.kube/config
-    - kubectl get namespace $NAMESPACE || kubectl create namespace $NAMESPACE
+  - export KUBECONFIG=/home/ubuntu/.kube/config
+  - kubectl get namespace $NAMESPACE || kubectl create namespace $NAMESPACE
   script:
     - helm upgrade --install users ./helm/users --values=helm/users/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/users" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_STAGING"
     - helm upgrade --install orders ./helm/orders --values=helm/orders/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/orders" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_STAGING"
@@ -186,10 +179,7 @@ deploy_prod:
   variables:
     NAMESPACE: prod
   before_script:
-    - mkdir -p ~/.kube
-    - echo "$KUBE_CONFIG" > ~/.kube/config
-    - chmod 600 ~/.kube/config
-    - export KUBECONFIG=~/.kube/config
+    - export KUBECONFIG=/home/ubuntu/.kube/config
     - kubectl get namespace $NAMESPACE || kubectl create namespace $NAMESPACE
   script:
     - helm upgrade --install users ./helm/users --values=helm/users/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/users" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_PROD"
