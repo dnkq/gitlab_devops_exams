@@ -1,6 +1,9 @@
 image:
   repository: dnkq/orders
   tag: latest
+  pullPolicy: IfNotPresent
+  pullSecrets:
+    - name: regcred
 
 service:
   type: ClusterIP

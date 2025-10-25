@@ -2,9 +2,9 @@ variables:
   KUBE_NAMESPACE_dev: dev
   KUBE_NAMESPACE_staging: staging
   KUBE_NAMESPACE_prod: prod
-  IP_DEV: 18.201.18.42
-  IP_STAGING: 18.201.18.42
-  IP_PROD: 18.201.18.42
+  IP_DEV: 54.194.121.146
+  IP_STAGING: 54.194.121.146
+  IP_PROD: 54.194.121.146
   NODEPORT_DEV: 30000
   NODEPORT_STAGING: 30001
   NODEPORT_PROD: 30002
@@ -126,7 +126,7 @@ stop_prod:
 deploy_dev:
   stage: deploy_dev
   image:
-    name: bitnami/kubectl-helm:latest
+    name: dtzar/helm-kubectl:3.18.6
     entrypoint: ["/bin/sh", "-c"]
   services:
     - docker:dind
@@ -150,7 +150,7 @@ deploy_dev:
 deploy_staging:
   stage: deploy_staging
   image:
-    name: bitnami/kubectl-helm:latest
+    name: dtzar/helm-kubectl:3.18.6
     entrypoint: ["/bin/sh", "-c"]
   services:
     - docker:dind
@@ -174,7 +174,7 @@ deploy_staging:
 deploy_prod:
   stage: deploy_prod
   image:
-    name: bitnami/kubectl-helm:latest
+    name: dtzar/helm-kubectl:3.18.6
     entrypoint: ["/bin/sh", "-c"]
   services:
     - docker:dind

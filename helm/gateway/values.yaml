@@ -1,6 +1,9 @@
 image:
   repository: dnkq/gateway
   tag: latest
+  pullPolicy: IfNotPresent
+  pullSecrets:
+    - name: regcred
 
 service:
   type: NodePort
