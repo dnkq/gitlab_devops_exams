@@ -9,6 +9,8 @@ spec:
   ports:
     - port: {{ .Values.service.port }}
       targetPort: {{ .Values.service.port }}
-      nodePort: {{ .Values.service.nodePort | default nil }}
+      {{- if .Values.service.nodePort }}
+      nodePort: {{ .Values.service.nodePort }}
+      {{- end }}
       protocol: TCP
   type: {{ .Values.service.type }}
