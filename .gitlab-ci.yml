@@ -104,6 +104,10 @@ run:
 
 stop_dev:
   stage: deploy_dev
+  tags:
+    - gitlab
+  image:
+    name: dtzar/helm-kubectl:3.18.6
   variables:
     NAMESPACE: dev
   when: manual
@@ -115,6 +119,10 @@ stop_dev:
 
 stop_staging:
   stage: deploy_staging
+  tags:
+    - gitlab
+  image:
+    name: dtzar/helm-kubectl:3.18.6
   variables:
     NAMESPACE: staging
   when: manual
@@ -126,6 +134,10 @@ stop_staging:
 
 stop_prod:
   stage: deploy_prod
+  tags:
+    - gitlab
+  image:
+    name: dtzar/helm-kubectl:3.18.6
   variables:
     NAMESPACE: prod
   when: manual
