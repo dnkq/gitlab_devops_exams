@@ -158,6 +158,12 @@ deploy_dev:
     - helm uninstall users --namespace $NAMESPACE || true
     - helm uninstall orders --namespace $NAMESPACE || true
     - helm uninstall gateway --namespace $NAMESPACE || true
+    - kubectl delete service users --namespace dev || true
+    - kubectl delete service orders --namespace dev || true
+    - kubectl delete service gateway --namespace dev || true
+    - kubectl delete deployment users --namespace dev || true
+    - kubectl delete deployment orders --namespace dev || true
+    - kubectl delete deployment gateway --namespace dev || true
     - helm upgrade --install users ./helm/users --values=helm/users/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/users" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
     - helm upgrade --install orders ./helm/orders --values=helm/orders/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/orders" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
     - helm upgrade --install gateway ./helm/gateway --values=helm/gateway/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/gateway" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
@@ -185,6 +191,12 @@ deploy_staging:
     - helm uninstall users --namespace $NAMESPACE || true
     - helm uninstall orders --namespace $NAMESPACE || true
     - helm uninstall gateway --namespace $NAMESPACE || true
+    - kubectl delete service users --namespace dev || true
+    - kubectl delete service orders --namespace dev || true
+    - kubectl delete service gateway --namespace dev || true
+    - kubectl delete deployment users --namespace dev || true
+    - kubectl delete deployment orders --namespace dev || true
+    - kubectl delete deployment gateway --namespace dev || true
     - helm upgrade --install users ./helm/users --values=helm/users/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/users" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_STAGING"
     - helm upgrade --install orders ./helm/orders --values=helm/orders/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/orders" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_STAGING"
     - helm upgrade --install gateway ./helm/gateway --values=helm/gateway/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/gateway" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_STAGING"
@@ -212,6 +224,12 @@ deploy_prod:
     - helm uninstall users --namespace $NAMESPACE || true
     - helm uninstall orders --namespace $NAMESPACE || true
     - helm uninstall gateway --namespace $NAMESPACE || true
+    - kubectl delete service users --namespace dev || true
+    - kubectl delete service orders --namespace dev || true
+    - kubectl delete service gateway --namespace dev || true
+    - kubectl delete deployment users --namespace dev || true
+    - kubectl delete deployment orders --namespace dev || true
+    - kubectl delete deployment gateway --namespace dev || true
     - helm upgrade --install users ./helm/users --values=helm/users/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/users" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_PROD"
     - helm upgrade --install orders ./helm/orders --values=helm/orders/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/orders" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_PROD"
     - helm upgrade --install gateway ./helm/gateway --values=helm/gateway/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/gateway" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_PROD"
