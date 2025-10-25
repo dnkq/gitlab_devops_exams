@@ -22,13 +22,6 @@ stages:
   - deploy_staging
   - deploy_prod
 
-test_runner:
-  stage: test
-  script:
-    - echo "Runner test OK"
-    - whoami
-    - hostname
-
 test_kubeconfig:
   stage: test
   image: dtzar/helm-kubectl:3.18.6
