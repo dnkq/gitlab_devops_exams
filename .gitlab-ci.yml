@@ -114,8 +114,20 @@ stop_dev:
   environment:
     name: dev-$CI_BUILD_REF_NAME
     action: stop
+  before_script:
+    - cp "$KUBE_CONFIG" ~/.kube/config
+    - export KUBECONFIG=~/.kube/config
   script:
-    - helm uninstall app -n $NAMESPACE
+    - helm uninstall users --namespace $NAMESPACE || true
+    - helm uninstall orders --namespace $NAMESPACE || true
+    - helm uninstall gateway --namespace $NAMESPACE || true
+    - kubectl delete service users --namespace $NAMESPACE || true
+    - kubectl delete service orders --namespace $NAMESPACE || true
+    - kubectl delete service gateway --namespace $NAMESPACE || true
+    - kubectl delete deployment users --namespace $NAMESPACE || true
+    - kubectl delete deployment orders --namespace $NAMESPACE || true
+    - kubectl delete deployment gateway --namespace $NAMESPACE || true
+  
 
 stop_staging:
   stage: deploy_staging
@@ -129,8 +141,20 @@ stop_staging:
   environment:
     name: staging-$CI_BUILD_REF_NAME
     action: stop
+  before_script:
+    - cp "$KUBE_CONFIG" ~/.kube/config
+    - export KUBECONFIG=~/.kube/config
   script:
-    - helm uninstall app -n $NAMESPACE
+    - helm uninstall users --namespace $NAMESPACE || true
+    - helm uninstall orders --namespace $NAMESPACE || true
+    - helm uninstall gateway --namespace $NAMESPACE || true
+    - kubectl delete service users --namespace $NAMESPACE || true
+    - kubectl delete service orders --namespace $NAMESPACE || true
+    - kubectl delete service gateway --namespace $NAMESPACE || true
+    - kubectl delete deployment users --namespace $NAMESPACE || true
+    - kubectl delete deployment orders --namespace $NAMESPACE || true
+    - kubectl delete deployment gateway --namespace $NAMESPACE || true
+  
 
 stop_prod:
   stage: deploy_prod
@@ -144,8 +168,20 @@ stop_prod:
   environment:
     name: prod
     action: stop
+  before_script:
+    - cp "$KUBE_CONFIG" ~/.kube/config
+    - export KUBECONFIG=~/.kube/config
   script:
-    - helm uninstall app -n $NAMESPACE
+    - helm uninstall users --namespace $NAMESPACE || true
+    - helm uninstall orders --namespace $NAMESPACE || true
+    - helm uninstall gateway --namespace $NAMESPACE || true
+    - kubectl delete service users --namespace $NAMESPACE || true
+    - kubectl delete service orders --namespace $NAMESPACE || true
+    - kubectl delete service gateway --namespace $NAMESPACE || true
+    - kubectl delete deployment users --namespace $NAMESPACE || true
+    - kubectl delete deployment orders --namespace $NAMESPACE || true
+    - kubectl delete deployment gateway --namespace $NAMESPACE || true
+  
 
 deploy_dev:
   stage: deploy_dev
