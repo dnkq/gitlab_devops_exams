@@ -8,6 +8,7 @@ variables:
   NODEPORT_DEV: 30000
   NODEPORT_STAGING: 30001
   NODEPORT_PROD: 30002
+  KUBECONFIG: /root/.kube/config
 
 image:
   name: "python:3.11-alpine"
@@ -136,13 +137,13 @@ deploy_dev:
     on_stop: stop_dev
   variables:
     NAMESPACE: dev
-  script:
-    - rm -Rf ~/.kube
-    - mkdir ~/.kube
-    - ls
-    - cat $KUBE_CONFIG > ~/.kube/config
+  before_script:
+    - mkdir -p ~/.kube
+    - echo "$KUBE_CONFIG" > ~/.kube/config
+    - chmod 600 ~/.kube/config
     - export KUBECONFIG=~/.kube/config
     - kubectl get namespace $NAMESPACE || kubectl create namespace $NAMESPACE
+  script:
     - helm upgrade --install users ./helm/users --values=helm/users/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/users" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
     - helm upgrade --install orders ./helm/orders --values=helm/orders/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/orders" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
     - helm upgrade --install gateway ./helm/gateway --values=helm/gateway/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/gateway" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_DEV"
@@ -160,13 +161,13 @@ deploy_staging:
     on_stop: stop_staging
   variables:
     NAMESPACE: staging
-  script:
-    - rm -Rf ~/.kube
-    - mkdir ~/.kube
-    - ls
-    - cat $KUBE_CONFIG > ~/.kube/config
+  before_script:
+    - mkdir -p ~/.kube
+    - echo "$KUBE_CONFIG" > ~/.kube/config
+    - chmod 600 ~/.kube/config
     - export KUBECONFIG=~/.kube/config
     - kubectl get namespace $NAMESPACE || kubectl create namespace $NAMESPACE
+  script:
     - helm upgrade --install users ./helm/users --values=helm/users/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/users" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_STAGING"
     - helm upgrade --install orders ./helm/orders --values=helm/orders/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/orders" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_STAGING"
     - helm upgrade --install gateway ./helm/gateway --values=helm/gateway/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/gateway" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_STAGING"
@@ -184,13 +185,13 @@ deploy_prod:
     url: http://$IP_PROD:$NODEPORT_PROD
   variables:
     NAMESPACE: prod
-  script:
-    - rm -Rf ~/.kube
-    - mkdir ~/.kube
-    - ls
-    - cat $KUBE_CONFIG > ~/.kube/config
+  before_script:
+    - mkdir -p ~/.kube
+    - echo "$KUBE_CONFIG" > ~/.kube/config
+    - chmod 600 ~/.kube/config
     - export KUBECONFIG=~/.kube/config
     - kubectl get namespace $NAMESPACE || kubectl create namespace $NAMESPACE
+  script:
     - helm upgrade --install users ./helm/users --values=helm/users/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/users" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_PROD"
     - helm upgrade --install orders ./helm/orders --values=helm/orders/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/orders" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_PROD"
     - helm upgrade --install gateway ./helm/gateway --values=helm/gateway/values.yaml --namespace $NAMESPACE --set image.repository="dnkq/gateway" --set image.tag="$CI_COMMIT_SHORT_SHA" --set service.nodeport="$NODEPORT_PROD"
